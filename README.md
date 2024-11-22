@@ -1,7 +1,7 @@
 # Starfall-chips
 (sorry my english so bad im write it without translater)
 # tp.lua 
-  Teleports to player on command 
+  Teleports to player on command (You can banned on a server if you use it in pvp mode)
   
   goto your_bro_3156236262
   or
