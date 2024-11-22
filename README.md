@@ -12,6 +12,10 @@
    mute stupid_ming_2523562
    or
    mute STEAM_0:0:766803141
+   
+   unmute stupid_ming_2523562
+   or
+   unmute STEAM_0:0:766803141
 
 # Starfall-chips (Ru)
 # tp.lua 
@@ -26,4 +30,8 @@
    mute stupid_ming_2523562
    или
    mute STEAM_0:0:766803141
-
+   
+   unmute stupid_ming_2523562
+   или
+   unmute STEAM_0:0:766803141
+   
