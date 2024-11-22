@@ -1,5 +1,5 @@
 --@name mute
---@author NiKoT1n
+--@author cool_bro
 --@shared
 --[[
 Blocks player messages (for yourself only)
@@ -16,7 +16,7 @@ if SERVER then
 local players
 local name
 local finded
-    hook.add("PlayerSay","tp",function(ply,text)
+    hook.add("PlayerSay","mute",function(ply,text)
         if ply == owner() and string.explode(" ",text)[1] == "mute" then
         players = find.allPlayers()
         name = string.explode(" ",text)[2]
@@ -30,7 +30,8 @@ local finded
         net.send(ply)
             end
         end
-return ""
+        print(player:getName().." muted")
+        return ""
 end
 if ply == owner() and string.explode(" ",text)[1] == "unmute" then
         players = find.allPlayers()
@@ -45,7 +46,8 @@ if ply == owner() and string.explode(" ",text)[1] == "unmute" then
         net.send(ply)
             end
         end
-return ""
+        print(player:getName().." unmuted")
+        return ""
 end
         end)
 end
