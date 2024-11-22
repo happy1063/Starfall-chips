@@ -1,5 +1,5 @@
 # Starfall-chips
-(sorry for my english)
+(sorry my english so bad im write it without translater)
 # tp.lua 
   Teleports to player on command 
   
