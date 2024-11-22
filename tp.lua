@@ -1,0 +1,50 @@
+--@name tp
+--@author cool_bro
+--@server
+--[[
+(WIRE REQUIED)
+(WIRE REQUIED)
+(WIRE REQUIED)
+
+Simple teleport command
+
+goto your_bro_3156236262
+or
+goto STEAM_0:0:766803141
+--]]
+    local seat = prop.createSeat(chip():getPos(), Angle(0), "models/hunter/blocks/cube05x05x05.mdl", true)
+    local podcontrol = prop.createSent(chip():getPos(), Angle(0), "gmod_wire_exit_point", true)
+    local podw = podcontrol:getWirelink()
+    podw["Entity"]=seat
+    podcontrol:setNoDraw(1)
+    podcontrol:setNocollideAll(1)
+    seat:setNoDraw(1)
+    seat:setNocollideAll(1)
+    local player
+    local players
+    local finded
+    local name
+    hook.add("PlayerSay","tp",function(ply,text)
+        if ply == owner() and string.explode(" ",text)[1] == "goto" then
+        players = find.allPlayers()
+        name = string.explode(" ",text)[2]
+        finded = 0
+        for i = 1 , table.count(players) do 
+            if players[i]:isValid() and (string.find(string.lower(players[i]:getName()),string.lower(name)) or players[i]:getSteamID() == name) then
+                player = players[i]
+                finded = 1
+            end
+        end
+        if finded == 1 then
+        seat:setPos(player:getPos())
+        podw["Position"]=player:getPos()+Vector(-100,0,0):getRotated(Angle(0,player:getEyeAngles()[2],0))
+        podw["Angle"]=Angle(0,player:getEyeAngles()[2],0)
+        timer.simple(0.1,function()
+        seat:use()
+        seat:ejectDriver()
+        seat:setPos(chip():getPos())
+    end)
+end
+      return ""
+        end
+    end)
