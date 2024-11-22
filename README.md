@@ -1,8 +1,8 @@
 # Starfall-chips (Eng)
 (sorry my english so bad im write it without translater)
 # tp.lua 
-  Teleports to player on command (You can banned on a server if you use it in pvp mode)
-  
+  Teleports to player on a command (You can banned on a server if you use it in pvp mode)
+  Command :
   goto your_bro_3156236262
   or
   goto STEAM_0:0:766803141
@@ -15,8 +15,8 @@
 
 # Starfall-chips (Ru)
 # tp.lua 
-  Телепортирует тебя к икроку по команде (Тебя могут забанить на сервере если использовать в пвп режиме)
-  
+  Телепортирует тебя к икроку (Тебя могут забанить на сервере если использовать в пвп режиме)
+  Команда :
   goto your_bro_3156236262
   или
   goto STEAM_0:0:766803141
