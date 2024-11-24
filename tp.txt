@@ -1,5 +1,5 @@
 --@name tp
---@author cool_bro
+--@author cool-bro
 --@server
 --[[
 (WIRE REQUIED)
