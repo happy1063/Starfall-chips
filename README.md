@@ -39,9 +39,9 @@
    unmute stupid_ming_2523562
    или
    unmute STEAM_0:0:766803141
-#anti-invis.txt
+# anti-invis.txt
   Делает видимыми все невидимые энтити.
-#anti-blind.txt
+# anti-blind.txt
   Делает невидимыми все вайр голограммы в радиусе 200 юнитов.
 
    
