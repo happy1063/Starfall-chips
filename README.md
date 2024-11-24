@@ -17,7 +17,10 @@
    or
    unmute STEAM_0:0:766803141
 #anti-invis.txt
-  Make visible all invisible entities
+  Make visible all invisible entities.
+#anti-blind.txt
+  Make invisible all wire holograms in 200 units radius.
+
 
 # Starfall-chips (Ru)
 # tp.txt
@@ -37,6 +40,8 @@
    или
    unmute STEAM_0:0:766803141
 #anti-invis.txt
-  Делает видимыми все невидимые энтити
+  Делает видимыми все невидимые энтити.
+#anti-blind.txt
+  Делает невидимыми все вайр голограммы в радиусе 200 юнитов.
 
    
