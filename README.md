@@ -16,9 +16,9 @@
    unmute stupid_ming_2523562
    or
    unmute STEAM_0:0:766803141
-#anti-invis.txt
+# anti-invis.txt
   Make visible all invisible entities.
-#anti-blind.txt
+# anti-blind.txt
   Make invisible all wire holograms in 200 units radius.
 
 
