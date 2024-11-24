@@ -1,5 +1,5 @@
 --@name mute
---@author cool_bro
+--@author cool-bro
 --@shared
 --[[
 Blocks player messages (for yourself only)
