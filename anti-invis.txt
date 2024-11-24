@@ -1,5 +1,5 @@
 --@name anti - invis
---@author NiKoT1n
+--@author cool-bro
 --@owneronly
 --@client
 --[[
