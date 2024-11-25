@@ -20,6 +20,8 @@
   Make visible all invisible entities.
 # anti-blind.txt
   Make invisible all wire holograms in 200 units radius.
+# skybox.txt
+  Replace texture of skybox.
 
 
 # Starfall-chips (Ru)
@@ -43,5 +45,6 @@
   Делает видимыми все невидимые энтити.
 # anti-blind.txt
   Делает невидимыми все вайр голограммы в радиусе 200 юнитов.
-
+# skybox.txt
+  Заменяет текстуру скайбокса.
    
