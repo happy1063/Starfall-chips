@@ -21,7 +21,7 @@
 # anti-blind.txt
   Make invisible all wire holograms in 200 units radius.
 # skybox.txt
-  Replace texture of skybox.
+  Replace texture of skybox. (not work with fog)
 
 
 # Starfall-chips (Ru)
@@ -46,5 +46,5 @@
 # anti-blind.txt
   Делает невидимыми все вайр голограммы в радиусе 200 юнитов.
 # skybox.txt
-  Заменяет текстуру скайбокса.
+  Заменяет текстуру скайбокса. (не работает на серверах где есть туман)
    
