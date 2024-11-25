@@ -1,5 +1,5 @@
 --@name tp
---@author cool-bro
+--@author cool_bro
 --@server
 --[[
 (WIRE REQUIED)
@@ -28,7 +28,6 @@ goto STEAM_0:0:766803141
         if ply == owner() and string.explode(" ",text)[1] == "goto" then
         players = find.allPlayers()
         name = string.sub(text,6)
-        print(name)
         finded = 0
         for i = 1 , table.count(players) do 
             if players[i]:isValid() and (string.find(string.lower(players[i]:getName()),string.lower(name)) or players[i]:getSteamID() == name) then
@@ -41,6 +40,7 @@ goto STEAM_0:0:766803141
         podw["Position"]=player:getPos()+Vector(-100,0,0):getRotated(Angle(0,player:getEyeAngles()[2],0))
         podw["Angle"]=Angle(0,player:getEyeAngles()[2],0)
         timer.simple(0.1,function()
+        print("Teleported to "..player:getName())
         seat:use()
         seat:ejectDriver()
         seat:setPos(Vector(0,0,0))
