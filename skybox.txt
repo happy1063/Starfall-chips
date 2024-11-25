@@ -1,0 +1,30 @@
+--@name skybox
+--@author cool-bro
+--@client
+--@owneronly
+--[[
+replace materail of skybox
+--]]
+--settings
+local url = "https://i.imgur.com/d5bWxdJ.gif"
+local model = "cube" -- models : cube , sphere , pyramid , cone
+
+--code
+local models = {
+    cube = "models/holograms/cube.mdl",
+    sphere = "models/holograms/hq_sphere.mdl",
+    pyramid = "models/holograms/pyramid.mdl",
+    cone = "models/holograms/hq_cone.mdl"
+    }
+local sky = hologram.create(owner():getShootPos(),Angle(0,0,180),models[model],Vector(-2500,-2500,-2500))
+sky:suppressEngineLighting(true)
+local mat = material.create("UnlitGeneric")
+mat:setInt("$flags", 256)
+mat:setTextureURL("$basetexture", url, function(m, u, w, h, l)
+if m == nil then return end
+l(0, 0, m:getWidth(), m:getHeight())
+sky:setMaterial("!" .. mat:getName())
+end)
+hook.add("think","",function()
+    sky:setPos(owner():getShootPos())
+end)
