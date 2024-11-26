@@ -9,7 +9,7 @@ hook.add("PlayerHurt","",function(ply)
     if ply == owner() then
         timer.remove("on")
         canHeal = 0
-        timer.create("on",5,0,function()
+        timer.create("on",5.2,0,function()
             canHeal = 1
         end)
     end
