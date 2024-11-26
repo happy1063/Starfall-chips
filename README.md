@@ -22,6 +22,8 @@
   Make invisible all wire holograms in 200 units radius.
 # skybox.txt
   Replace texture of skybox. (not work with fog)
+№ auto-heal.txt
+  Automaticly heals player.
 
 
 # Starfall-chips (Ru)
@@ -47,4 +49,6 @@
   Делает невидимыми все вайр голограммы в радиусе 200 юнитов.
 # skybox.txt
   Заменяет текстуру скайбокса. (не работает на серверах где есть туман)
+# auto-heal.txt
+  Автоматически лечит игрока.
    
