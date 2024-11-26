@@ -1,22 +1,24 @@
 --@name skybox
---@author cool-bro
+--@author 
 --@client
 --@owneronly
 --[[
 replace materail of skybox
 --]]
 --settings
-local url = "https://i.imgur.com/d5bWxdJ.gif"
-local model = "cube" -- models : cube , sphere , pyramid , cone
+local url = "https://i.imgur.com/DrTGfP1.jpeg"
+local model = "sphere" -- models : cube , sphere
 
 --code
 local models = {
     cube = "models/holograms/cube.mdl",
-    sphere = "models/holograms/hq_sphere.mdl",
-    pyramid = "models/holograms/pyramid.mdl",
-    cone = "models/holograms/hq_cone.mdl"
+    sphere = "models/holograms/hq_sphere.mdl"
     }
-local sky = hologram.create(owner():getShootPos(),Angle(0,0,180),models[model],Vector(-2500,-2500,-2500))
+local sizeX = {
+    cube =  Vector(-4000,-4000,-3900),
+    sphere = Vector(-4400,-4400,-3900)
+    }
+local sky = hologram.create(owner():getShootPos(),Angle(0,0,180),models[model],sizeX[model])
 sky:suppressEngineLighting(true)
 local mat = material.create("UnlitGeneric")
 mat:setInt("$flags", 256)
