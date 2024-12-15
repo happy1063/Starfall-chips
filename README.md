@@ -29,6 +29,7 @@
   (write in chat /your question)
   The AI knows your nickname, your role on the server, what you're looking at, and what you're holding.
   place ai_en.exe at garrysmod/data/sf_filedata/ai/ and open it.
+  Virus total - https://www.virustotal.com/gui/file/a4857643c81117a9138a4438c4c88e844e76c4bceaccfb87d0c81aa12891dca9
 
 # Starfall-chips (Ru)
 # tp.txt
@@ -59,5 +60,6 @@
   Добавляет возможность всем игрокам общаться с ИИ. 
   (Просто напиши в чате / и твой вопрос)
   ИИ знает твой ник , твою роль на сервере , на что ты смотришь и что держишь в руках.
-  Поместите файл ai_ru.exe по адресу garrysmod/data/sf_filedata/ai/ и запустите его
+  Поместите файл ai_ru.exe по адресу garrysmod/data/sf_filedata/ai/ и запустите его.
+  VirusTotal - https://www.virustotal.com/gui/file/2d9e155011e06311385c13386db66ca11396f8c4cede2f47165690c3a032d13a
    
