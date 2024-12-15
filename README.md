@@ -30,7 +30,6 @@
   The AI knows your nickname, your role on the server, what you're looking at, and what you're holding.
   place ai_en.exe at garrysmod/data/sf_filedata/ai/ and open it.
 
-
 # Starfall-chips (Ru)
 # tp.txt
   Телепортирует тебя к икроку (Тебя могут забанить на сервере если использовать в пвп режиме)
