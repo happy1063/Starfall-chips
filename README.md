@@ -24,11 +24,11 @@
   Replace texture of skybox. (not work with fog)
 # auto-heal.txt
   Automaticly heals player.
-# ai/ai.txt
+# ai_en/ai.txt
   Adds the ability for all players to communicate with the AI. 
   (write in chat /your question)
   The AI knows your nickname, your role on the server, what you're looking at, and what you're holding.
-  place ai_en.exe at garrysmod/data/sf_filedata/ai/
+  place ai_en.exe at garrysmod/data/sf_filedata/ai/ and open it.
 
 
 # Starfall-chips (Ru)
@@ -56,9 +56,9 @@
   Заменяет текстуру скайбокса. (не работает на серверах где есть туман)
 # auto-heal.txt
   Автоматически лечит игрока.
-# ai/ai.txt
+# ai_ru/ai.txt
   Добавляет возможность всем игрокам общаться с ИИ. 
   (Просто напиши в чате / и твой вопрос)
   ИИ знает твой ник , твою роль на сервере , на что ты смотришь и что держишь в руках.
-  Поместите файл ai_ru.exe по адресу garrysmod/data/sf_filedata/ai/
+  Поместите файл ai_ru.exe по адресу garrysmod/data/sf_filedata/ai/ и запустите его
    
