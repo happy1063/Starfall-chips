@@ -1,0 +1,123 @@
+--@name baallssssssssssssssssssss
+--@author 
+--@shared
+
+if SERVER then
+local main = prop.create(chip():getPos() + Vector(0,0,20),Angle() , "models/hunter/misc/sphere075x075.mdl",true)
+main:setMass(20000)
+main:setMaterial("models/props_pipes/pipesystem01a_skin2")
+main:getPhysicsObject():setMaterial("gmod_silent")
+main:enableSphere(true, 37.5/2)
+main:getPhysicsObject():addGameFlags(FVPHYSICS.DMG_DISSOLVE)
+local chair = prop.createSent(chip():getPos() + chip():getUp() * 10, Angle(), "Chair_Plastic", true)
+local podc = prop.createSent(chip():getPos(), Angle(), "gmod_wire_pod", true)
+local pod= podc:getWirelink()
+local mass = main:getMass()
+podc:setNocollideAll(true)
+podc:setNoDraw(true)
+main:enableDrag(false)
+
+pod["Vehicle"]=chair
+pod["Hide Player"]=1
+
+chair:setNoDraw(true)
+chair:setNocollideAll(true)
+local first = chair:getPos()
+local hud = prop.createComponent(chip():getPos(), Angle(0) , "starfall_hud", "models/bull/dynamicbuttonsf.mdl", true)
+hud:linkComponent(chip())
+hud:linkComponent(chair)
+hud:setNoDraw(true)
+hud:setNocollideAll(true)
+chip():setPos(Vector(0))
+chip():setNoDraw(true)
+local driver
+
+local function set_driver(ply, vehicle, role)
+    if vehicle ~= chair then return end 
+    driver = role and ply 
+    main:setFrozen(not isValid(driver))
+end
+
+local function onground(ent)
+    return trace.line(ent:getPos(),ent:getPos()-Vector(0,0,40),function() return false end).Hit
+end
+
+hook.add("PlayerEnteredVehicle", "SetDriver", set_driver)
+hook.add("PlayerLeaveVehicle", "SetDriver", set_driver)
+
+hook.add("ClientInitialized","load",function(ply)
+    net.start("load")
+    net.writeEntity(main)
+    net.send(ply)
+end)
+
+hook.add("tick","",function()
+    chair:setPos(main:getPos()+Vector(0,0,10))
+    chair:setAngles(Angle(0))
+    chair:setFrozen(true)
+    main:setNocollideAll(false)
+    if driver and onground(main) then
+        if driver:keyDown(IN_KEY.FORWARD) then
+            main:applyAngForce(Angle(12*mass,0,0))
+            main:applyForceCenter(Vector(6*mass,0,0):getRotated(Angle(0,driver:getEyeAngles()[2],0)))
+        end
+        if driver:keyDown(IN_KEY.BACK) then
+            main:applyAngForce(Angle(-12*mass,0,0))
+            main:applyForceCenter(Vector(-6*mass,0,0):getRotated(Angle(0,driver:getEyeAngles()[2],0)))
+        end
+        if driver:keyDown(IN_KEY.MOVELEFT) then
+            main:applyAngForce(Angle(12*mass,90,0))
+            main:applyForceCenter(Vector(0,6*mass,0):getRotated(Angle(0,driver:getEyeAngles()[2],0)))
+        end
+        if driver:keyDown(IN_KEY.MOVERIGHT) then
+            main:applyAngForce(Angle(12*mass,-90,0))
+            main:applyForceCenter(Vector(0,-6*mass,0):getRotated(Angle(0,driver:getEyeAngles()[2],0)))
+        end
+        if driver:keyDown(IN_KEY.JUMP) then
+            main:applyForceCenter(Vector(0,0,106*mass):getRotated(Angle(0,driver:getEyeAngles()[2],0)))
+        end
+        if driver:keyDown(IN_KEY.SPEED) then
+            local force = -main:getVelocity()/3*mass
+            main:applyForceCenter(Vector(force[1],force[2]))
+            main:applyAngForce(-main:getAngleVelocityAngle()/2*mass)
+        end
+    end
+end)
+
+hook.add("EntityTakeDamage","",function(ent)
+    if ent == main then
+        return true
+    end
+end)
+
+end
+if CLIENT then
+    net.receive("load",function()
+        net.readEntity(function(ent)
+            main(ent)
+            end)
+    end)
+    function main(ent)
+        local font = render.createFont("Arial",72,400,false,true,false,true)
+        hook.add("drawhud","",function()
+            local pos1 = ent:getPos():toScreen()
+            local x1,y1=pos1.x,pos1.y
+            local vel = ent:getVelocity()
+            local tr = trace.line(ent:getPos(),ent:getPos()+Vector(vel[1],vel[2],0)*10,function() return false end)
+            local pos2 = tr.HitPos:toScreen()
+            local x2,y2=pos2.x,pos2.y
+            render.setColor(Color(255,0,0))
+            render.drawLine(x1,y1,x2,y2)
+            render.setColor(Color(104,104,104))
+            render.drawRoundedBox(10,1600,800,300,100)  
+            render.setColor(Color(255,255,255))   
+            local speed = ent:getVelocity():getLength() * 0.01905 * 3.6
+            render.setFont(font)
+            render.drawSimpleText(1750,850,tostring(math.ceil(speed)).." KM/H",1,1)
+        end)
+        hook.add("calcview","",function()
+            local tr = trace.line(ent:getPos(),ent:getPos()+Vector(-100,0,0):getRotated(eyeAngles()),function() return false end)
+            return {origin=tr.HitPos+Vector(9,0,0):getRotated(eyeAngles()),drawviewer=true}
+        end)
+    end
+end
