@@ -1,0 +1,20 @@
+--@name 
+--@client
+--@owneronly
+
+local myWindow = createWindow("Window", 100, 100, 300, 200)
+addChild(myWindow, createLabel("Hello world!", 20, 50))
+addChild(myWindow, createButton("Ok", 20, 100, 100, 30, function() 
+    myWindow.draw = false 
+    input.enableCursor(false) 
+end))
+
+hook.add("think", "toggleWindowOnInsert", function()
+    if input.wasKeyPressed(KEY.INSERT) then
+        toggleWindow(myWindow)
+    end
+end)
+
+hook.add("render", "drawMyWindow", function()
+    drawWindow(myWindow)
+end)
