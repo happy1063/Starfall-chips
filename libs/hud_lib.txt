@@ -1,0 +1,146 @@
+--@name hud lib
+--@client
+--@owneronly
+
+enableHud(nil,true)
+
+function createWindow(name, x, y, w, h)
+    return {
+        name = name,
+        x = x,
+        y = y,
+        w = w,
+        h = h,
+        draw = false,
+        child = {},
+        dragging = false,
+        dragOffset = {0, 0}
+    }
+end
+
+local curx, cury = input.getCursorPos()
+local cursorpos = {curx, cury}
+local mousedown = false
+local lastmousedown = false
+
+timer.create("cursor", 0.01, 0, function()
+    curx, cury = input.getCursorPos()
+    cursorpos = {curx, cury}
+    mousedown = input.isMouseDown(MOUSE.MOUSE1)
+end)
+
+local function isCursorOver(x, y, w, h)
+    return cursorpos[1] > x and cursorpos[1] < x + w and cursorpos[2] > y and cursorpos[2] < y + h
+end
+
+local function drawButton(x, y, w, h, text, onclick)
+    local hovered = isCursorOver(x, y, w, h)
+    local clicked = hovered and mousedown and not lastmousedown 
+    
+    if clicked then onclick() end
+
+    local color = hovered and Color(0, 180, 220) or Color(0, 150, 200)
+    render.setColor(color)
+    render.drawRect(x, y, w, h)
+
+    render.setColor(Color(255, 255, 255))
+    render.drawSimpleText(x + w / 2, y + h / 2, text, 1, 1)
+end
+
+function toggleWindow(window)
+    window.draw = not window.draw
+    input.enableCursor(window.draw)
+end
+
+function addChild(window, child)
+    table.insert(window.child, child)
+end
+
+function createLabel(text, x, y)
+    return { type = "label", text = text, x = x, y = y }
+end
+
+function createButton(text, x, y, w, h, onclick)
+    return { type = "button", text = text, x = x, y = y, w = w, h = h, onclick = onclick }
+end
+
+function createEntry(x, y, w, h, text)
+    return { type = "entry", x = x, y = y, w = w, h = h, text = text or "", active = false }
+end
+
+hook.add("inputPressed", "entryInput", function(key)
+    for _, window in pairs(windows or {}) do
+        for _, child in ipairs(window.child) do
+            if child.type == "entry" and child.active then
+                if key == KEY.BACKSPACE then
+                    child.text = child.text:sub(1, -2)
+                elseif key >= 32 and key <= 126 then
+                    child.text = child.text .. string.char(key)
+                end
+            end
+        end
+    end
+end)
+
+function drawWindow(window)
+    if not window.draw then return end
+    if not input.getCursorVisible() then input.enableCursor(true) end
+
+    if mousedown and isCursorOver(window.x, window.y, window.w, 30) then
+        if not window.dragging then
+            window.dragging = true
+            window.dragOffset = { cursorpos[1] - window.x, cursorpos[2] - window.y }
+        end
+    elseif not mousedown then
+        window.dragging = false
+    end
+
+    if window.dragging then
+        window.x = cursorpos[1] - window.dragOffset[1]
+        window.y = cursorpos[2] - window.dragOffset[2]
+    end
+ 
+    render.setColor(Color(80, 80, 80)) 
+    render.drawRect(window.x, window.y, window.w, window.h)
+
+    render.setColor(Color(40, 40, 40))   
+    render.drawRect(window.x, window.y, window.w, 30)
+
+    render.setColor(Color(255, 255, 255))
+    render.drawSimpleText(window.x + 15, window.y + 12, window.name, 0, 1)
+
+    local closeHovered = isCursorOver(window.x + window.w - 30, window.y, 30, 30)
+    render.setColor(closeHovered and Color(180, 0, 0) or Color(255, 0, 0))
+    render.drawRect(window.x + window.w - 30, window.y, 30, 30)
+    render.setColor(Color(255, 255, 255))
+    render.drawSimpleText(window.x + window.w - 15, window.y + 14, "X", 1, 1)
+
+    if closeHovered and mousedown and not lastmousedown then
+        window.draw = false
+        input.enableCursor(false)
+    end
+  
+    for _, child in ipairs(window.child) do
+        if child.type == "label" then
+            render.drawSimpleText(window.x + child.x, window.y + child.y, child.text, 0, 1)
+        elseif child.type == "button" then
+            drawButton(window.x + child.x, window.y + child.y, child.w, child.h, child.text, child.onclick)
+        elseif child.type == "entry" then
+            local entryHovered = isCursorOver(window.x + child.x, window.y + child.y, child.w, child.h)
+            local entryColor = child.active and Color(255, 255, 255) or (entryHovered and Color(220, 220, 220) or Color(200, 200, 200))
+
+            render.setColor(entryColor)
+            render.drawRect(window.x + child.x, window.y + child.y, child.w, child.h)
+
+            render.setColor(Color(0, 0, 0))
+            render.drawSimpleText(window.x + child.x + 5, window.y + child.y + 5, child.text, 0, 1)
+
+            if mousedown and entryHovered then
+                child.active = true
+            elseif mousedown then
+                child.active = false
+            end
+        end
+    end
+    lastmousedown = mousedown
+end
