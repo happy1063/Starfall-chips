@@ -1,7 +1,7 @@
 --@name 
 --@client
 --@owneronly
---@include https://raw.githubusercontent.com/happy1063/Starfall-chips/refs/heads/main/libs/hud_lib.txt
+--@include hud_lib.txt
 
 require("hud_lib.txt")
 
@@ -19,6 +19,6 @@ hook.add("InputPressed", "toggleWindow", function(a)
 end)
 
 
-hook.add("render", "drawMyWindow", function()
+hook.add("drawhud", "drawMyWindow", function()
     drawWindow(myWindow)
 end)
