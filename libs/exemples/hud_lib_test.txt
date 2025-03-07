@@ -1,7 +1,7 @@
 --@name 
 --@client
 --@owneronly
---@include hud_lib.txt
+--@include https://raw.githubusercontent.com/happy1063/Starfall-chips/refs/heads/main/libs/hud_lib.txt
 
 require("hud_lib.txt")
 
