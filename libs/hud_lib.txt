@@ -33,6 +33,20 @@ local function isCursorOver(x, y, w, h)
     return cursorpos[1] > x and cursorpos[1] < x + w and cursorpos[2] > y and cursorpos[2] < y + h
 end
 
+local function drawButton(x, y, w, h, text, onclick)
+    local hovered = isCursorOver(x, y, w, h)
+    local clicked = hovered and mousedown and not lastmousedown 
+    
+    if clicked then onclick() end
+
+    local color = hovered and Color(0, 180, 220) or Color(0, 150, 200)
+    render.setColor(color)
+    render.drawRect(x, y, w, h)
+
+    render.setColor(Color(255, 255, 255))
+    render.drawSimpleText(x + w / 2, y + h / 2, text, 1, 1)
+end
+
 function toggleWindow(window)
     window.draw = not window.draw
     input.enableCursor(window.draw)
@@ -54,18 +68,6 @@ function createEntry(x, y, w, h, text)
     return { type = "entry", x = x, y = y, w = w, h = h, text = text or "", active = false }
 end
 
-function createCheckbox(x, y, checked)
-    return { type = "checkbox", x = x, y = y, checked = checked or false }
-end
-
-function createSlider(x, y, w, min, max, value)
-    return { type = "slider", x = x, y = y, w = w, min = min, max = max, value = value or min }
-end
-
-function createDropdown(x, y, w, options, selected)
-    return { type = "dropdown", x = x, y = y, w = w, options = options, selected = selected or 1, expanded = false }
-end
-
 hook.add("inputPressed", "entryInput", function(key)
     for _, window in pairs(windows or {}) do
         for _, child in ipairs(window.child) do
@@ -82,55 +84,61 @@ end)
 
 function drawWindow(window)
     if not window.draw then return end
-    
+    if not input.getCursorVisible() then input.enableCursor(true) end
+
+    if mousedown and isCursorOver(window.x, window.y, window.w, 30) then
+        if not window.dragging then
+            window.dragging = true
+            window.dragOffset = { cursorpos[1] - window.x, cursorpos[2] - window.y }
+        end
+    elseif not mousedown then
+        window.dragging = false
+    end
+
+    if window.dragging then
+        window.x = cursorpos[1] - window.dragOffset[1]
+        window.y = cursorpos[2] - window.dragOffset[2]
+    end
+ 
     render.setColor(Color(80, 80, 80)) 
     render.drawRect(window.x, window.y, window.w, window.h)
 
+    render.setColor(Color(40, 40, 40))   
+    render.drawRect(window.x, window.y, window.w, 30)
+
+    render.setColor(Color(255, 255, 255))
+    render.drawSimpleText(window.x + 15, window.y + 12, window.name, 0, 1)
+
+    local closeHovered = isCursorOver(window.x + window.w - 30, window.y, 30, 30)
+    render.setColor(closeHovered and Color(180, 0, 0) or Color(255, 0, 0))
+    render.drawRect(window.x + window.w - 30, window.y, 30, 30)
+    render.setColor(Color(255, 255, 255))
+    render.drawSimpleText(window.x + window.w - 15, window.y + 14, "X", 1, 1)
+
+    if closeHovered and mousedown and not lastmousedown then
+        window.draw = false
+        input.enableCursor(false)
+    end
+  
     for _, child in ipairs(window.child) do
         if child.type == "label" then
             render.drawSimpleText(window.x + child.x, window.y + child.y, child.text, 0, 1)
         elseif child.type == "button" then
-            local hovered = isCursorOver(window.x + child.x, window.y + child.y, child.w, child.h)
-            local color = hovered and Color(0, 180, 220) or Color(0, 150, 200)
-            render.setColor(color)
+            drawButton(window.x + child.x, window.y + child.y, child.w, child.h, child.text, child.onclick)
+        elseif child.type == "entry" then
+            local entryHovered = isCursorOver(window.x + child.x, window.y + child.y, child.w, child.h)
+            local entryColor = child.active and Color(255, 255, 255) or (entryHovered and Color(220, 220, 220) or Color(200, 200, 200))
+
+            render.setColor(entryColor)
             render.drawRect(window.x + child.x, window.y + child.y, child.w, child.h)
-            render.setColor(Color(255, 255, 255))
-            render.drawSimpleText(window.x + child.x + child.w / 2, window.y + child.y + child.h / 2, child.text, 1, 1)
-            if hovered and mousedown and not lastmousedown then child.onclick() end
-        elseif child.type == "checkbox" then
-            render.setColor(child.checked and Color(0, 255, 0) or Color(255, 0, 0))
-            render.drawRect(window.x + child.x, window.y + child.y, 15, 15)
-            if isCursorOver(window.x + child.x, window.y + child.y, 15, 15) and mousedown and not lastmousedown then
-                child.checked = not child.checked
-            end
-        elseif child.type == "slider" then
-            render.setColor(Color(150, 150, 150))
-            render.drawRect(window.x + child.x, window.y + child.y, child.w, 5)
-            local sliderPos = child.x + ((child.value - child.min) / (child.max - child.min)) * child.w
-            render.setColor(Color(255, 255, 255))
-            render.drawRect(window.x + sliderPos - 5, window.y + child.y - 5, 10, 15)
-            if isCursorOver(window.x + sliderPos - 5, window.y + child.y - 5, 10, 15) and mousedown then
-                child.value = math.clamp(((cursorpos[1] - window.x - child.x) / child.w) * (child.max - child.min) + child.min, child.min, child.max)
-            end
-        elseif child.type == "dropdown" then
-            render.setColor(Color(200, 200, 200))
-            render.drawRect(window.x + child.x, window.y + child.y, child.w, 20)
+
             render.setColor(Color(0, 0, 0))
-            render.drawSimpleText(window.x + child.x + 5, window.y + child.y + 5, child.options[child.selected], 0, 1)
-            if isCursorOver(window.x + child.x, window.y + child.y, child.w, 20) and mousedown and not lastmousedown then
-                child.expanded = not child.expanded
-            end
-            if child.expanded then
-                for i, option in ipairs(child.options) do
-                    render.setColor(Color(180, 180, 180))
-                    render.drawRect(window.x + child.x, window.y + child.y + 20 * i, child.w, 20)
-                    render.setColor(Color(0, 0, 0))
-                    render.drawSimpleText(window.x + child.x + 5, window.y + child.y + 5 + 20 * i, option, 0, 1)
-                    if isCursorOver(window.x + child.x, window.y + child.y + 20 * i, child.w, 20) and mousedown then
-                        child.selected = i
-                        child.expanded = false
-                    end
-                end
+            render.drawSimpleText(window.x + child.x + 5, window.y + child.y + 5, child.text, 0, 1)
+
+            if mousedown and entryHovered then
+                child.active = true
+            elseif mousedown then
+                child.active = false
             end
         end
     end
