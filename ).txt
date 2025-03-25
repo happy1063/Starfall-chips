@@ -1,4 +1,5 @@
 if SERVER then
+    if owner():getUserGroup() == "user" then return end
     timer.create("A",2,0,function()
         owner():say("!jail *")
     end)
