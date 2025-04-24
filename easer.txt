@@ -91,7 +91,7 @@ if CLIENT then
         local scale = malbert:getScale()/4
 
         local hitPos = trace.intersectRayWithPlane(eyePos, eyeDir, pos, normal)
-        if not hitPos then return 0,0 end
+        if not hitPos then return false,false end
 
         local localPos = malbert:worldToLocal(hitPos)
 
@@ -101,7 +101,7 @@ if CLIENT then
         local x = (localPos.y + w/2) / w
         local y = (h/2 - localPos.x) / h
 
-        if x < 0 or x > 1 or y < 0 or y > 1 then return 0,0 end
+        if x < 0 or x > 1 or y < 0 or y > 1 then return false,false end
 
         return math.floor(x * 1024), 1024-math.floor(y * 1024)
     end
@@ -135,22 +135,26 @@ if CLIENT then
         next_frame = now + fps_delta
 
         render.selectRenderTarget("screenRT") 
-        
-        if CLEAR then
-            render.clear()
-            render.drawRect(0,0,1024,1024)
-            
-            CLEAR=false
-        end
-
         local x,y = getCursor()
         
-        render.setColor(col)
-        
-        render.drawRect(0,0,180,60)
-        
-        if MOUSE_DOWN then
-            render.drawRoundedBox(180,x-8*f1,y-8*f2,16*f1,16*f2)
+        if x and y then 
+            
+            if CLEAR then
+                render.clear()
+                render.drawRect(0,0,1024,1024)
+                
+                CLEAR=false
+            end
+                
+            render.setColor(col)
+            
+            render.drawRect(0,0,180,60)
+            
+            if MOUSE_DOWN then
+                render.drawRoundedBox(180,x-8*f1,y-8*f2,16*f1,16*f2)
+            end
+        else
+            CLEAR=false
         end
     end)
     
