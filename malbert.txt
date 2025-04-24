@@ -1,0 +1,132 @@
+--@name malbert
+--@author Niko
+--@shared
+
+if CLIENT then
+    local holos = {} 
+    
+    local wood = material.create("VertexLitGeneric")
+    
+    wood:setTextureURL("$basetexture","https://raw.githubusercontent.com/happy1063/mymesh/refs/heads/main/easer/easer_002.jpg")
+    
+    local paper = material.create("VertexLitGeneric")
+    
+    paper:setTextureURL("$basetexture","https://raw.githubusercontent.com/happy1063/mymesh/refs/heads/main/easer/easer_001.jpg")    
+    
+    local mats = {
+            wood,
+            wood,
+            wood,
+            paper,
+            wood,
+        }
+        
+    local malbert = hologram.create(chip():getPos()+Vector(-11.6,0,47),Angle(80,180,0),"models/holograms/plane.mdl",Vector(3.37,2.13))
+    
+    render.createRenderTarget("screenRT")
+    
+    local texture = material.create("UnlitGeneric")
+    
+    texture:setInt("$flags", 0)
+    
+    texture:setTextureRenderTarget("$basetexture","screenRT")
+    
+    malbert:setMaterial("!"..texture:getName())
+    
+    http.get("https://raw.githubusercontent.com/happy1063/mymesh/refs/heads/main/easer/main.obj", function(objdata)
+        local triangles = mesh.trianglesLeft()
+        local meshes = {}
+    
+        local function doneLoadingMesh()
+            for i, part in ipairs(meshes) do  
+                local holo = holograms.create(chip():getPos(), Angle(0,0,90), "models/Combine_Helicopter/helicopter_bomb01.mdl", Vector(20))
+                
+                holo:setMesh(part)
+                
+                if mats[i] then
+                    holo:setMeshMaterial(mats[i])
+                end
+                
+                holo:setRenderBounds(Vector(-200), Vector(200))
+    
+                table.insert(holos, holo)   
+            end
+        end
+    
+        local loadmesh = coroutine.wrap(function() 
+            for _, part in pairs(mesh.createFromObj(objdata, true, true)) do
+                table.insert(meshes, part)   
+            end
+            return true
+        end)
+    
+        hook.add("think", "loadingMesh", function()
+            while quotaAverage() < quotaMax() / 2 do
+                if loadmesh() then
+                    doneLoadingMesh()
+                    hook.remove("think", "loadingMesh")
+                    return
+                end
+            end
+        end)
+    end)
+    local FPS = 360 
+
+    local next_frame = 0 
+    local fps_delta = 1/FPS
+    
+    local function getCursor()
+        local ply = player()
+        local eyePos = eyePos()
+        local eyeDir = eyeAngles():getForward()
+
+        local pos = malbert:getPos()
+        local ang = malbert:getAngles()
+        local normal = ang:getUp()
+        local scale = malbert:getScale()/4
+
+        local hitPos = trace.intersectRayWithPlane(eyePos, eyeDir, pos, normal)
+        if not hitPos then return 0,0 end
+
+        local localPos = malbert:worldToLocal(hitPos)
+
+        local w = 48 * scale.y
+        local h = 48 * scale.x
+
+        local x = (localPos.y + w/2) / w
+        local y = (h/2 - localPos.x) / h
+
+        if x < 0 or x > 1 or y < 0 or y > 1 then return 0,0 end
+
+        return math.floor(x * 1024), 1024-math.floor(y * 1024)
+    end
+        
+    local f1 = malbert:getScale()[1]
+    local f2 = malbert:getScale()[2]
+    local h = 0
+    local col = Color(h,255,255)
+    
+    hook.add("RenderOffscreen","test",function()
+        local now = timer.systime()
+        if next_frame > now then return end
+        next_frame = now + fps_delta
+
+        render.selectRenderTarget("screenRT") 
+
+        local x,y = getCursor()
+        
+        render.setColor(col)
+        
+        render.drawRect(0,0,180,60)
+        
+        if input.isMouseDown(MOUSE.MOUSE1) then
+            render.drawRoundedBox(180,x-8*f1,y-8*f2,16*f1,16*f2)
+        end
+    end)
+    
+    hook.add("MouseWheeled","",function(a)
+        h=h+a*16
+        
+        col = Color(h,255,255):hsvToRGB()
+    end)
+end
