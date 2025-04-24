@@ -2,6 +2,10 @@
 --@author Niko
 --@shared
 
+if SERVER then
+    chip():setNoDraw(true)
+end
+
 if CLIENT then
     local holos = {} 
     
@@ -70,6 +74,7 @@ if CLIENT then
             end
         end)
     end)
+    
     local FPS = 360 
 
     local next_frame = 0 
@@ -105,7 +110,7 @@ if CLIENT then
     local f2 = malbert:getScale()[2]
     local h = 0
     local MOUSE_DOWN = false
-    local CLEAR = false
+    local CLEAR = true
     local col = Color(h,255,255)
     
     hook.add("InputPressed","MOUSE_DOWN",function(a)
@@ -122,10 +127,6 @@ if CLIENT then
         if a == MOUSE.MOUSE1 then
             MOUSE_DOWN = false
         end
-        
-        if a == MOUSE.MOUSE2 then
-            CLEAR = false
-        end
     end)
     
     hook.add("RenderOffscreen","test",function()
@@ -134,9 +135,12 @@ if CLIENT then
         next_frame = now + fps_delta
 
         render.selectRenderTarget("screenRT") 
-
+        
         if CLEAR then
             render.clear()
+            render.drawRect(0,0,1024,1024)
+            
+            CLEAR=false
         end
 
         local x,y = getCursor()
@@ -151,7 +155,7 @@ if CLIENT then
     end)
     
     hook.add("MouseWheeled","",function(a)
-        h=h+a*16
+        h=h+a*24
         
         col = Color(h,255,255):hsvToRGB()
     end)
