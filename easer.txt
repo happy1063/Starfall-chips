@@ -75,7 +75,7 @@ if CLIENT then
         end)
     end)
     
-    local FPS = 360 
+    local FPS = 60 
 
     local next_frame = 0 
     local fps_delta = 1/FPS
@@ -111,6 +111,7 @@ if CLIENT then
     local h = 0
     local MOUSE_DOWN = false
     local CLEAR = true
+    local FIRST = true
     local col = Color(h,255,255)
     
     hook.add("InputPressed","MOUSE_DOWN",function(a)
@@ -129,6 +130,8 @@ if CLIENT then
         end
     end)
     
+    local p = malbert:getPos()
+    
     hook.add("RenderOffscreen","test",function()
         local now = timer.systime()
         if next_frame > now then return end
@@ -137,8 +140,14 @@ if CLIENT then
         render.selectRenderTarget("screenRT") 
         local x,y = getCursor()
         
-        if x and y then 
+        if FIRST then
+            render.clear()
+            render.drawRect(0,0,1024,1024)
             
+            FIRST=false
+        end    
+
+        if x and y then 
             if CLEAR then
                 render.clear()
                 render.drawRect(0,0,1024,1024)
@@ -151,7 +160,7 @@ if CLIENT then
             render.drawRect(0,0,180,60)
             
             if MOUSE_DOWN then
-                render.drawRoundedBox(180,x-8*f1,y-8*f2,16*f1,16*f2)
+                render.drawRoundedBox(180,x-10*f1,y-10*f2,20*f1,20*f2)
             end
         else
             CLEAR=false
