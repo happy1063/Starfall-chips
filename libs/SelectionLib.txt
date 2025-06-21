@@ -1,4 +1,4 @@
---@name SelectorLib
+--@name SelectionLib
 --@shared
 
 if SERVER then
