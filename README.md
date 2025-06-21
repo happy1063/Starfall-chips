@@ -90,6 +90,7 @@ This repository contains a collection of StarfallEx chips that add various funct
 ### Selection Library
 - **File**: `libs/SelectionLib.txt`
 - **Description**: Creates an interactive selection menu.
+- **Screenshot**: https://github.com/happy1063/Starfall-chips/blob/main/images/SelectionLib.png?raw=true
 - **Features**:
   - Scrollable list
   - Keyboard navigation
