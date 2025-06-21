@@ -1,0 +1,127 @@
+--@name SelectorLib
+--@shared
+
+if SERVER then
+    function openSelectionMenu(ply, vars, name, callback)
+        local id = tostring({}) 
+        
+        net.start("Selection")
+        net.writeString(id)
+        net.writeString(name)
+        net.writeTable(vars)
+        net.send(ply)
+        
+        net.receive("Callback"..id, function()
+            local var = net.readString()
+            if not var then return end
+            
+            callback(var)
+        end)
+    end
+end
+
+if CLIENT then
+    local selectionData = {
+        current = 1,
+        list = {},
+        callback = nil,
+        id = nil
+    }
+    
+    local screenX,screenY = render.getGameResolution()
+
+    function openSelectionMenu(vars, name, callback)
+        if not render.isHUDActive() then enableHud(nil, true) end
+        
+        selectionData.current = 1
+        selectionData.name = name
+        selectionData.list = vars
+        selectionData.callback = callback
+        selectionData.id = "Temp"
+    end
+
+    function sendSelection(index)
+        if not selectionData.id or not selectionData.list[index] then return end
+        net.start("Callback"..selectionData.id)
+        net.writeString(selectionData.list[index])
+        net.send()
+        
+        selectionData = {current = 1, list = {}, callback = nil, id = nil}
+    end
+
+    net.receive("Selection", function()
+        local id = net.readString()
+        local name = net.readString()
+        local vars = net.readTable()
+        
+        openSelectionMenu(vars, name, function(choice)
+            sendSelection(choice)
+        end)
+        selectionData.id = id
+    end)
+    
+    local spacing = 48
+    local centerY = screenY / 2
+    local visible = 1   
+    local font = render.createFont("Arial",24)
+    local def_font = render.createFont("Arial",16,800)
+     
+    hook.add("DrawHud", "SelectionDraw", function()
+        if not selectionData.list[1] then return end
+        local itemCount = 2 * visible + 1
+        local boxHeight = spacing * itemCount
+        local boxWidth = 250
+        local boxX = screenX / 2 - boxWidth / 2
+        local boxY = centerY - spacing * visible - spacing / 2
+        
+        render.setColor(Color(80,60,255))
+        render.drawRect(boxX+5, boxY-15, boxWidth + 20, boxHeight + 40)
+        render.setColor(Color(50,30,200))
+        render.drawRect(boxX+10, boxY+10, boxWidth + 10, boxHeight + 10)
+        
+        if selectionData.name then
+            render.setColor(Color(255,255,255))
+            render.setFont(def_font)
+            render.drawText(boxX+10, boxY-10,selectionData.name)
+        end        
+
+        for i = -visible, visible do
+            local index = selectionData.current + i
+            if selectionData.list[index] then
+                local y = centerY + i * spacing
+                local color = (i == 0) and Color(255, 255, 255) or Color(255, 255, 255)
+                local bcolor = (i == 0) and Color(0, 255, 0) or Color(0, 255, 255)
+    
+                local text = selectionData.list[index]
+                render.setFont(font)
+    
+                local maxTextWidth = boxWidth - 20
+                while render.getTextSize(text) > maxTextWidth do
+                    text = string.sub(text, 1, #text - 1)
+                end
+                if render.getTextSize(selectionData.list[index]) > maxTextWidth then
+                    text = text:sub(1, #text - 3) .. "..."
+                end
+    
+                render.setColor(bcolor)
+                render.drawRect(boxX + 15, y - 10, boxWidth, spacing)
+                render.setColor(color)
+                render.drawText(boxX + 20, y, text)
+            end
+        end
+    end)
+
+    hook.add("InputPressed", "SelectorScrollInput", function(key)
+        if not selectionData.list[1] then return end
+        
+        if key == KEY.UPARROW then
+            selectionData.current = math.max(1, selectionData.current - 1)
+        elseif key == KEY.DOWNARROW then
+            selectionData.current = math.min(#selectionData.list, selectionData.current + 1)
+        elseif key == KEY.ENTER then
+            if selectionData.callback then
+                selectionData.callback(selectionData.current)
+            end
+        end
+    end)
+end
