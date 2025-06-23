@@ -27,7 +27,6 @@ This repository contains a collection of StarfallEx chips that add various funct
 
 ### Auto Heal
 - **File**: `auto-heal.txt`
-- **Author**: cool-bro
 - **Description**: Automatically spawns health kits and batteries when the player's health or armor is low.
 - **Features**:
   - Cooldown system after taking damage
@@ -45,7 +44,6 @@ This repository contains a collection of StarfallEx chips that add various funct
 
 ### Eraser Drawing Tool
 - **File**: `easer.txt`
-- **Author**: Niko
 - **Description**: An interactive drawing tool with holographic interface.
 - **Features**:
   - Left click to draw
@@ -55,7 +53,6 @@ This repository contains a collection of StarfallEx chips that add various funct
 
 ### Mute Player
 - **File**: `mute.txt`
-- **Author**: cool-bro
 - **Description**: Allows you to mute/unmute specific players.
 - **Usage**:
   - `mute player_name_or_steamid`
@@ -63,7 +60,6 @@ This repository contains a collection of StarfallEx chips that add various funct
 
 ### Sticky Slam
 - **File**: `sticky_slam.txt`
-- **Author**: Niko
 - **Description**: Makes satchels stick to surfaces they collide with.
 - **Features**:
   - Freezes satchel on impact
@@ -71,7 +67,6 @@ This repository contains a collection of StarfallEx chips that add various funct
 
 ### Teleport
 - **File**: `tp.txt`
-- **Author**: cool_bro
 - **Description**: Teleports you to another player.
 - **Usage**: `goto player_name_or_steamid`
 - **Requirements**: Wiremod
