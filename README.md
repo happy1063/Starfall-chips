@@ -91,3 +91,12 @@ This repository contains a collection of StarfallEx chips that add various funct
   - Keyboard navigation
   - Callback system
   - Server-client communication
+  - 
+### Notification Library
+* **File**: `libs/NotificationLib.txt`
+* **Description**: Displays notifications with animations and sounds.
+* **Features**:
+  * Supports notification types (`error`, `message`, `hint`)
+  * Customizable colors and sounds
+  * Smooth show and hide animations
+  * Supports multiple notifications simultaneously
