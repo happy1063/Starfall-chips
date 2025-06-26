@@ -1,0 +1,111 @@
+--@name NotificationLib
+--@shared
+--@superuser
+
+if SERVER then
+    function notify(player,type,text,delay,custom)
+        net.start("Notify")
+        net.writeTable({type,text,delay,custom})
+        net.send(player)
+    end
+end
+
+if CLIENT then
+    local notifications = {}
+    local types = {
+        ["error"]={
+            color=Color(255,0,0),
+            sound="buttons/button18.wav"
+        },
+        ["message"]={
+            color=Color(0,255,255),
+            sound="garrysmod/content_downloaded.wav"
+        },
+        ["hint"]={
+            color=Color(255,255,0),
+            sound="garrysmod/content_downloaded.wav"
+        },             
+    }
+    
+    local screenX,screenY = render.getGameResolution()
+
+
+    function notify(type, text, delay, custom)
+        local data = {
+            text = text,
+            created_at = timer.curtime(),
+            delay = delay,
+            anim_start = timer.curtime(),
+            alpha = 0
+        }
+    
+        if custom then
+            data.color = custom.color
+            data.sound = custom.sound
+        else
+            data.color = types[type].color
+            data.sound = types[type].sound
+        end
+    
+        table.insert(notifications, data)
+    
+        player():emitSound(data.sound)
+    end
+
+    net.receive("Notify", function()
+        local data = net.readTable()
+        notify(data[1],data[2],data[3],data[4])
+    end)
+    
+    local font = render.createFont("Arial",24)
+    local def_font = render.createFont("Arial",16,800)
+    
+    function math.easeOutElastic(t)
+        local p = 1
+        return math.pow(2, -10 * t) * math.sin((t - p / 4) * (2 * math.pi) / p) + 1
+    end
+    
+    hook.add("DrawHud", "NotifyDraw", function()
+        local cur = timer.curtime()
+    
+        for i, n in ipairs(notifications) do
+            n.target_y = 100 + (i - 1) * 70
+            if not n.y then n.y = n.target_y end
+   
+            local dy = n.target_y - n.y
+            n.y = n.y + dy * math.min(0.2 * timer.frametime() * 60, 1)
+        end
+    
+        for i, n in ipairs(notifications) do
+            local life = cur - n.created_at
+            local exit = math.clamp((n.delay - life) / 0.5, 0, 1)
+            local appear = math.clamp(life / 0.4, 0, 1)
+    
+            local ease = math.easeOutElastic(appear)
+            local fade = math.min(appear, exit)
+            n.alpha = 255 * fade
+    
+            local size = render.getTextSize(n.text) + 5
+            local baseX = 0
+            local offsetX = - (1 - ease) * (size + 80)
+            local y = n.y or (100 + (i - 1) * 70)
+    
+            render.setColor(Color(5, 0, 0, 240 * fade))
+            render.drawRect(baseX + offsetX, y, size + 40, 60)
+    
+            local c = n.color
+            render.setColor(Color(c[1], c[2], c[3], 100 * fade))
+            render.drawRect(baseX + offsetX + size + 20, y, 20, 60)
+    
+            render.setFont(font)
+            render.setColor(Color(255, 255, 255, n.alpha))
+            render.drawSimpleText(baseX + offsetX + 10, y + 30, n.text, 0, 1)
+        end
+    
+        for i = #notifications, 1, -1 do
+            if cur - notifications[i].created_at > notifications[i].delay then
+                table.remove(notifications, i)
+            end
+        end
+    end)
+end
